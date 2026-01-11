@@ -1,0 +1,19 @@
+{
+  "name": "daily-progress-traker",
+  "version": "1.0.0",
+  "description": "A premium, offline-first web application to track your daily study progress, specifically tailored for your engineering curriculum.",
+  "main": "script.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}

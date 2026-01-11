@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit | Daily Study Tracker</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-atom fa-spin-pulse"></i>
+                <span>Orbit</span>
+            </div>
+
+            <div class="nav-links">
+                <button class="nav-btn active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-view="tracker">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Daily Log</span>
+                </button>
+                <button class="nav-btn" data-view="analytics">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Analytics</span>
+                </button>
+                <button class="nav-btn" data-view="history">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>History</span>
+                </button>
+            </div>
+
+            <div class="nav-footer">
+                <button class="nav-btn accent-btn" id="exportBtn">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Backup Data</span>
+                </button>
+                <button class="nav-btn danger-btn" id="resetBtn">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-text">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="currentDate">Monday, Jan 01 2024</p>
+                </div>
+                <div class="header-actions">
+                    <div class="streak-badge" title="Current Streak">
+                        <i class="fa-solid fa-fire"></i>
+                        <span id="headerStreak">0</span> Days
+                    </div>
+                </div>
+            </header>
+
+            <!-- Views -->
+
+            <!-- Dashboard View -->
+            <div id="dashboard" class="view active-view">
+                <div class="stats-grid">
+                    <div class="stat-card glass-panel">
+                        <div class="icon-box gradient-1">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Progress</h3>
+                            <p class="stat-value" id="dashTotalProgress">0%</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="icon-box gradient-2">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>DSA Solved</h3>
+                            <p class="stat-value" id="dashDSA">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="icon-box gradient-3">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Vocab Mastered</h3>
+                            <p class="stat-value" id="dashVocab">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel">
+                        <div class="icon-box gradient-4">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Longest Streak</h3>
+                            <p class="stat-value" id="dashBestStreak">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-split">
+                    <div class="course-progress-section glass-panel">
+                        <h2>Course Completion</h2>
+                        <div class="courses-list" id="dashboardCourses">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="activity-summary glass-panel">
+                        <h2>Weekly Activity</h2>
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Tracker View -->
+            <div id="tracker" class="view">
+                <div class="tracker-container">
+
+                    <div class="tracker-column">
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-graduation-cap"></i> Courses</h2>
+                                <span class="date-tag">Today's Progress</span>
+                            </div>
+                            <div class="tracker-form" id="courseInputs">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tracker-column">
+                        <!-- DSA Section -->
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-code"></i> DSA Practice</h2>
+                                <button class="icon-btn" id="dsaSettingsBtn" title="Configure LeetCode">
+                                    <i class="fa-solid fa-gear"></i>
+                                </button>
+                            </div>
+
+                            <!-- Input Area -->
+                            <div class="dsa-input-area">
+                                <div class="input-group">
+                                    <label>Problem Link (LeetCode)</label>
+                                    <div class="verify-row">
+                                        <input type="text" id="dsaLink" placeholder="https://leetcode.com/problems/...">
+                                        <button id="verifyBtn" class="action-btn">
+                                            <i class="fa-solid fa-check"></i> Verify
+                                        </button>
+                                    </div>
+                                    <small id="verifyStatus" class="status-text"></small>
+                                </div>
+                            </div>
+
+                            <!-- Solved List -->
+                            <div class="solved-list-container">
+                                <label>Solved Today (<span id="dsaCountDisplay">0</span>/4)</label>
+                                <div id="solvedList" class="solved-list">
+                                    <!-- Populated by JS -->
+                                    <div class="empty-state">No problems verified yet today</div>
+                                </div>
+                            </div>
+
+                            <div class="checkbox-group" style="margin-top: 15px;">
+                                <input type="checkbox" id="dsaGoalMet" disabled>
+                                <label for="dsaGoalMet">Daily Goal Met (Auto-checked)</label>
+                            </div>
+                        </div>
+
+                        <!-- Vocabulary Section -->
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-font"></i> GRE Vocabulary</h2>
+                            </div>
+                            <div class="input-group">
+                                <label>Word of the Day</label>
+                                <input type="text" id="greWord" placeholder="New word...">
+                            </div>
+                            <div class="input-group">
+                                <label>Definition / Context</label>
+                                <textarea id="greDef" rows="2" placeholder="Meaning..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Other Activities -->
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-check-double"></i> Other Activities</h2>
+                            </div>
+                            <div class="activity-toggles">
+                                <div class="toggle-item">
+                                    <input type="checkbox" id="aptitudeCheck">
+                                    <label for="aptitudeCheck">
+                                        <span class="icon"><i class="fa-solid fa-brain"></i></span>
+                                        <div class="text">
+                                            <span class="title">Aptitude Practice</span>
+                                            <span class="subtitle">Daily session completed</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="toggle-item">
+                                    <input type="checkbox" id="linuxCheck">
+                                    <label for="linuxCheck">
+                                        <span class="icon"><i class="fa-brands fa-linux"></i></span>
+                                        <div class="text">
+                                            <span class="title">Linux Practice</span>
+                                            <span class="subtitle">Commands & scripting</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="glass-panel">
+                            <div class="panel-header">
+                                <h2><i class="fa-solid fa-note-sticky"></i> Daily Notes</h2>
+                            </div>
+                            <textarea id="dailyNotes" rows="3" placeholder="Any thoughts or blockers today?"></textarea>
+                        </div>
+
+                        <button class="save-btn" id="saveDayBtn">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Today's Progress
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analytics" class="view">
+                <div class="glass-panel">
+                    <h2><i class="fa-solid fa-chart-area"></i> Detailed Analytics</h2>
+                    <div class="charts-grid">
+                        <div class="chart-box">
+                            <h3>Study Distribution</h3>
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <h3>DSA Consistency</h3>
+                            <canvas id="dsaTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history" class="view">
+                <div class="glass-panel">
+                    <h2><i class="fa-solid fa-clock-rotate-left"></i> History Log</h2>
+                    <div class="history-table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Courses</th>
+                                    <th>DSA</th>
+                                    <th>Vocab</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Configure LeetCode</h2>
+                <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>LeetCode Username</label>
+                    <input type="text" id="lcUsername" placeholder="username">
+                    <small style="color:var(--text-secondary); display:block; margin-top:5px;">
+                        Required for verification. Your profile must be public.
+                    </small>
+                </div>
+                <button id="saveSettingsBtn" class="save-btn">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationArea"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
